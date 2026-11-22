@@ -337,6 +337,147 @@
                 transform: none !important;
             }
         }
+        /* Cada bloco vira uma mini-cena controlada pela rolagem */
+        .global-scroll-section {
+            height: 170vh;
+            min-height: 1000px;
+        }
+        .global-scroll-section > .max-w-7xl,
+        .global-scroll-section > .max-w-5xl,
+        body > footer.global-scroll-section {
+            position: sticky;
+            top: 64px;
+            min-height: calc(100vh - 64px);
+        }
+        .global-scroll-section > .max-w-7xl,
+        .global-scroll-section > .max-w-5xl {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: var(--scene-opacity, 1);
+            filter: blur(var(--scene-blur, 0px));
+            transform:
+                translate3d(var(--scene-x, 0), var(--scene-y, 0), 0)
+                scale(var(--scene-scale, 1));
+            transform-origin: 50% 46%;
+            will-change: transform, opacity, filter;
+        }
+        #sobre.global-scroll-section,
+        #metodologia.global-scroll-section,
+        #dados.global-scroll-section,
+        #diario.global-scroll-section {
+            background-attachment: scroll;
+        }
+        #dados.global-scroll-section {
+            height: 210vh;
+            min-height: 1450px;
+        }
+        #dados.global-scroll-section > .max-w-7xl {
+            height: calc(100vh - 64px);
+            overflow: hidden;
+            padding-top: 24px;
+            padding-bottom: 24px;
+        }
+        #dados.global-scroll-section > .max-w-7xl > * {
+            flex-shrink: 0;
+        }
+        #dados.global-scroll-section > .max-w-7xl .overflow-x-auto {
+            max-height: 32vh;
+            overflow-y: auto;
+        }
+        #resultados.global-scroll-section {
+            height: 175vh;
+        }
+        #diario.global-scroll-section {
+            height: 205vh;
+        }
+        #diario.global-scroll-section > .max-w-5xl {
+            height: calc(100vh - 64px);
+            overflow: hidden;
+        }
+        body > section.relative.bg-ocean-900.global-scroll-section {
+            height: 150vh;
+            min-height: 900px;
+        }
+        body > section.relative.bg-ocean-900.global-scroll-section > .relative.z-10 {
+            position: sticky;
+            top: 16vh;
+            margin-top: 1vh;
+        }
+        .scene-card {
+            transform:
+                perspective(1000px)
+                translate3d(var(--card-scroll-x, 0), var(--card-scroll-y, 0), 0)
+                rotateX(var(--card-tilt-x, 0deg));
+            will-change: transform, opacity;
+        }
+        #scrub-canvas {
+            position: absolute;
+            z-index: 3;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .scrub-sky::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(100deg, transparent 15%, rgba(255,255,255,.12) 26%, transparent 38%),
+                radial-gradient(ellipse at 50% 56%, rgba(186,230,253,.16), transparent 46%);
+            opacity: var(--atmosphere, .55);
+            transform: translateX(var(--light-sweep, 0));
+            mix-blend-mode: screen;
+        }
+        .scrub-water {
+            background:
+                linear-gradient(180deg, rgba(224,242,254,.86) 0%, #38bdf8 8%, #0ea5e9 24%, #0369a1 58%, #082f49 100%);
+            box-shadow:
+                0 -18px 42px rgba(186,230,253,.48),
+                inset 0 22px 55px rgba(224,242,254,.24);
+        }
+        .scrub-water::after {
+            content: "";
+            position: absolute;
+            inset: 12% 0 0;
+            background:
+                repeating-radial-gradient(ellipse at 32% 10%, transparent 0 12px, rgba(224,242,254,.22) 13px 14px, transparent 15px 28px);
+            opacity: .48;
+            transform: translateY(var(--water-ripple, 0)) scaleX(var(--water-ripple-scale, 1));
+        }
+        footer.global-scroll-section {
+            height: 70vh;
+            min-height: 520px;
+            display: flex;
+            align-items: center;
+        }
+        @media (max-width: 768px) {
+            .global-scroll-section,
+            #dados.global-scroll-section,
+            #diario.global-scroll-section,
+            #resultados.global-scroll-section,
+            body > section.relative.bg-ocean-900.global-scroll-section {
+                height: 125vh;
+                min-height: 820px;
+            }
+            #dados.global-scroll-section > .max-w-7xl,
+            #diario.global-scroll-section > .max-w-5xl {
+                height: calc(100vh - 64px);
+                overflow-y: auto;
+                justify-content: flex-start;
+                padding-top: 48px;
+                padding-bottom: 48px;
+            }
+            .global-scroll-section > .max-w-7xl,
+            .global-scroll-section > .max-w-5xl {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            body > section.relative.bg-ocean-900.global-scroll-section > .relative.z-10 {
+                top: 20vh;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden">
@@ -449,6 +590,7 @@
             <div class="scrub-rain"></div>
             <div class="scrub-city"></div>
             <div class="scrub-water"></div>
+            <canvas id="scrub-canvas" aria-hidden="true"></canvas>
 
             <div class="scrub-metrics">
                 <div class="scrub-date">
@@ -902,6 +1044,127 @@
         window.addEventListener('resize', updateScrubAnimation);
         updateScrubAnimation();
 
+        // 3A. Cena hídrica ultrarrealista controlada pela mesma linha do tempo
+        const scrubCanvas = document.getElementById('scrub-canvas');
+        const scrubContext = scrubCanvas.getContext('2d');
+        let scrubCanvasProgress = 0;
+        let scrubCanvasRain = 0;
+        let scrubCanvasWidth = 0;
+        let scrubCanvasHeight = 0;
+
+        function resizeScrubCanvas() {
+            if (!scrubCanvas) return;
+            const rect = scrubCanvas.getBoundingClientRect();
+            const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+            scrubCanvasWidth = rect.width;
+            scrubCanvasHeight = rect.height;
+            scrubCanvas.width = Math.round(rect.width * ratio);
+            scrubCanvas.height = Math.round(rect.height * ratio);
+            scrubContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+        }
+
+        function drawScrubScene(time) {
+            if (!scrubCanvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            const rect = scrubSection.getBoundingClientRect();
+            const sceneVisible = rect.bottom > 64 && rect.top < window.innerHeight;
+            if (sceneVisible) {
+                const w = scrubCanvasWidth;
+                const h = scrubCanvasHeight;
+                scrubContext.clearRect(0, 0, w, h);
+
+                const horizon = h * 0.56;
+                const waterTop = horizon + h * (0.44 - scrubCanvasProgress * 0.18);
+
+                scrubContext.save();
+                scrubContext.globalCompositeOperation = 'screen';
+                const skyReflection = scrubContext.createLinearGradient(0, horizon * 0.5, 0, waterTop);
+                skyReflection.addColorStop(0, 'rgba(186, 230, 253, 0)');
+                skyReflection.addColorStop(0.7, `rgba(186, 230, 253, ${0.05 + scrubCanvasProgress * 0.08})`);
+                skyReflection.addColorStop(1, 'rgba(224, 242, 254, 0.14)');
+                scrubContext.fillStyle = skyReflection;
+                scrubContext.fillRect(0, horizon * 0.25, w, waterTop - horizon * 0.25);
+                scrubContext.restore();
+
+                scrubContext.save();
+                for (let band = 0; band < 18; band++) {
+                    const y = waterTop + band * (h - waterTop) / 18;
+                    const amplitude = 2 + band * 0.34;
+                    const offset = Math.sin(time * 0.0012 + band * 0.52 + scrubCanvasProgress * 5) * amplitude;
+                    scrubContext.beginPath();
+                    for (let x = -20; x <= w + 20; x += 10) {
+                        const wave = Math.sin(x * 0.018 + time * 0.0013 + band * 0.7) * (1.2 + band * 0.08);
+                        const py = y + wave + offset * 0.12;
+                        if (x === -20) scrubContext.moveTo(x, py);
+                        else scrubContext.lineTo(x, py);
+                    }
+                    scrubContext.strokeStyle = `rgba(224, 242, 254, ${0.08 + (17 - band) * 0.008})`;
+                    scrubContext.lineWidth = band % 4 === 0 ? 1.4 : 0.7;
+                    scrubContext.stroke();
+                }
+                scrubContext.restore();
+
+                const foamLevel = waterTop + 18 + Math.sin(time * 0.0017) * 4;
+                scrubContext.save();
+                scrubContext.beginPath();
+                scrubContext.moveTo(0, foamLevel);
+                for (let x = 0; x <= w; x += 12) {
+                    const y = foamLevel +
+                        Math.sin(x * 0.026 + time * 0.0022) * 5 +
+                        Math.sin(x * 0.071 - time * 0.0016) * 2;
+                    scrubContext.lineTo(x, y);
+                }
+                scrubContext.lineTo(w, waterTop + 70);
+                scrubContext.lineTo(0, waterTop + 70);
+                scrubContext.closePath();
+                const foamGradient = scrubContext.createLinearGradient(0, foamLevel, 0, waterTop + 70);
+                foamGradient.addColorStop(0, 'rgba(224, 242, 254, 0.46)');
+                foamGradient.addColorStop(0.5, 'rgba(125, 211, 252, 0.16)');
+                foamGradient.addColorStop(1, 'rgba(125, 211, 252, 0)');
+                scrubContext.fillStyle = foamGradient;
+                scrubContext.fill();
+                scrubContext.restore();
+
+                if (scrubCanvasRain > 0.08) {
+                    scrubContext.save();
+                    const count = Math.round(30 + scrubCanvasRain * 90);
+                    for (let i = 0; i < count; i++) {
+                        const seed = i * 73.13;
+                        const x = (seed * 19.7 + time * 0.11) % (w + 80) - 40;
+                        const y = (seed * 31.9 + time * (0.13 + scrubCanvasRain * 0.08)) % h;
+                        scrubContext.beginPath();
+                        scrubContext.moveTo(x, y);
+                        scrubContext.lineTo(x - 10 - scrubCanvasRain * 8, y + 22 + scrubCanvasRain * 16);
+                        scrubContext.strokeStyle = `rgba(224, 242, 254, ${0.12 + scrubCanvasRain * 0.22})`;
+                        scrubContext.lineWidth = 0.8;
+                        scrubContext.stroke();
+                    }
+                    scrubContext.restore();
+                }
+            }
+
+            window.requestAnimationFrame(drawScrubScene);
+        }
+
+        const originalUpdateScrubAnimation = updateScrubAnimation;
+        updateScrubAnimation = function () {
+            originalUpdateScrubAnimation();
+            const rect = scrubSection.getBoundingClientRect();
+            const scrollable = rect.height - window.innerHeight;
+            scrubCanvasProgress = Math.min(1, Math.max(0, -rect.top / Math.max(scrollable, 1)));
+            const rainText = document.getElementById('scrub-rain').textContent;
+            const rainValue = parseFloat(rainText.replace(',', '.'));
+            scrubCanvasRain = Number.isFinite(rainValue) ? rainValue / 145 : 0;
+            const sticky = scrubSection.querySelector('.scrub-sticky');
+            sticky.style.setProperty('--atmosphere', `${0.35 + scrubCanvasProgress * 0.65}`);
+            sticky.style.setProperty('--light-sweep', `${Math.round((scrubCanvasProgress - 0.5) * 80)}px`);
+            sticky.style.setProperty('--water-ripple', `${Math.round(Math.sin(scrubCanvasProgress * 12) * 8)}px`);
+            sticky.style.setProperty('--water-ripple-scale', `${1 + Math.sin(scrubCanvasProgress * 9) * 0.025}`);
+        };
+        window.addEventListener('resize', resizeScrubCanvas);
+        resizeScrubCanvas();
+        window.requestAnimationFrame(drawScrubScene);
+
         // 4. Scroll realista em todo o site
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const scrollSections = [...document.querySelectorAll('main section, body > section')];
@@ -919,12 +1182,55 @@
         scrollImages.forEach(image => image.classList.add('scroll-image-depth'));
         scrollDividers.forEach(divider => divider.classList.add('scroll-divider-depth'));
 
+        // Transforma os principais blocos em cenas sticky ao longo de toda a página
+        document.querySelectorAll('body > section').forEach(section => {
+            if (section.id !== 'linha-do-tempo') section.classList.add('global-scroll-section');
+        });
+        document.querySelector('footer').classList.add('global-scroll-section');
+
+        const globalSceneSections = [...document.querySelectorAll(
+            'body > section.global-scroll-section, footer.global-scroll-section'
+        )];
+        document.querySelectorAll(
+            '.global-scroll-section .glass, .global-scroll-section .bg-white, ' +
+            '.global-scroll-section .rounded-3xl, .global-scroll-section .rounded-2xl'
+        ).forEach(card => card.classList.add('scene-card'));
+
         let scrollSceneFrame = false;
 
         function updateScrollScenes() {
             if (reducedMotion) return;
 
             const viewportHeight = window.innerHeight;
+            globalSceneSections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.bottom < 0 || rect.top > viewportHeight) return;
+
+                const sceneDistance = (rect.top + rect.height * 0.5 - viewportHeight * 0.5) / viewportHeight;
+                const sceneVisibility = Math.max(0, 1 - Math.abs(sceneDistance) * 1.15);
+                const easedVisibility = sceneVisibility * sceneVisibility * (3 - 2 * sceneVisibility);
+                const sceneY = Math.max(-42, Math.min(42, sceneDistance * -52));
+                const sceneX = Math.sin(Math.min(1, Math.max(0, sceneVisibility)) * Math.PI) * -8;
+                const sceneScale = 0.94 + easedVisibility * 0.06;
+
+                section.style.setProperty('--scene-opacity', `${0.18 + easedVisibility * 0.82}`);
+                section.style.setProperty('--scene-blur', `${Math.max(0, (1 - easedVisibility) * 3)}px`);
+                section.style.setProperty('--scene-y', `${sceneY}px`);
+                section.style.setProperty('--scene-x', `${sceneX}px`);
+                section.style.setProperty('--scene-scale', sceneScale.toFixed(4));
+
+                section.querySelectorAll('.scene-card').forEach((card, index) => {
+                    const cardRect = card.getBoundingClientRect();
+                    if (cardRect.bottom < 0 || cardRect.top > viewportHeight) return;
+                    const cardDistance = (cardRect.top + cardRect.height * 0.5 - viewportHeight * 0.5) / viewportHeight;
+                    card.style.setProperty('--card-scroll-y', `${Math.max(-18, Math.min(18, cardDistance * -26))}px`);
+                    card.style.setProperty('--card-scroll-x', `${Math.max(-4, Math.min(4, cardDistance * 8))}px`);
+                    card.style.setProperty('--card-tilt-x', `${Math.max(-3.5, Math.min(3.5, cardDistance * 5))}deg`);
+                    card.style.opacity = `${0.45 + easedVisibility * 0.55}`;
+                    card.style.transitionDelay = `${index * 18}ms`;
+                });
+            });
+
             scrollSections.forEach(section => {
                 const rect = section.getBoundingClientRect();
                 if (rect.bottom < -100 || rect.top > viewportHeight + 100) return;
