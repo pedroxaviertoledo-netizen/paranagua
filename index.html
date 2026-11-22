@@ -86,9 +86,65 @@
         }
         .bar-tide { background: linear-gradient(90deg, #38bdf8, #0284c7); }
         .bar-rain { background: linear-gradient(90deg, #34d399, #047857); }
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            width: 100%;
+            height: 4px;
+            transform-origin: left center;
+            transform: scaleX(0);
+            background: linear-gradient(90deg, #38bdf8, #34d399);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+        }
+        #navbar {
+            top: 4px;
+        }
+        .scroll-reveal {
+            will-change: transform, opacity;
+        }
+        @supports (animation-timeline: scroll()) {
+            #scroll-progress {
+                transform: none;
+                animation: page-progress linear;
+                animation-timeline: scroll(root block);
+            }
+            .scroll-reveal {
+                animation: scroll-reveal linear both;
+                animation-timeline: view();
+                animation-range: entry 5% cover 38%;
+            }
+            @keyframes page-progress {
+                from { transform: scaleX(0); }
+                to { transform: scaleX(1); }
+            }
+            @keyframes scroll-reveal {
+                from {
+                    opacity: 0;
+                    transform: translateY(70px) scale(0.96);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .fade-in,
+            .scroll-reveal {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            #scroll-progress {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden">
+
+    <div id="scroll-progress" aria-hidden="true"></div>
 
     <!-- Navegação -->
     <nav class="fixed w-full z-50 transition-all duration-300 bg-ocean-900/90 backdrop-blur-md text-white shadow-lg" id="navbar">
@@ -193,7 +249,7 @@
             <h2 class="text-3xl font-bold text-ocean-900 mb-4 fade-in">Como a pesquisa foi feita?</h2>
             <p class="text-slate-500 max-w-2xl mx-auto mb-16 fade-in">Uma abordagem qualiquantitativa dividida em três fases integradas para compreender o cenário físico e social.</p>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 scroll-reveal">
                 <!-- Fase 1 -->
                 <div class="bg-slate-50 p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-shadow fade-in">
                     <div class="w-16 h-16 bg-ocean-100 text-ocean-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6">
@@ -356,7 +412,7 @@
                 <p class="text-ocean-100 max-w-2xl mx-auto">Resultados obtidos a partir dos questionários aplicados a 50 moradores e comerciantes expostos aos eventos extremos em Paranaguá.</p>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 scroll-reveal">
                 <!-- Stat 1 -->
                 <div class="glass p-6 rounded-2xl text-center fade-in">
                     <div class="text-4xl md:text-5xl font-extrabold text-ocean-400 mb-2 flex justify-center items-baseline">
@@ -407,7 +463,7 @@
                 <p class="text-slate-500">Cronograma de desenvolvimento e atividades do projeto.</p>
             </div>
 
-            <div class="relative border-l-4 border-ocean-200 ml-4 md:ml-0 md:mx-auto max-w-3xl">
+            <div class="relative border-l-4 border-ocean-200 ml-4 md:ml-0 md:mx-auto max-w-3xl scroll-reveal">
                 
                 <!-- Fase 1 -->
                 <div class="mb-10 ml-8 relative fade-in">
@@ -522,6 +578,32 @@
                 navbar.classList.remove('shadow-xl');
             }
         });
+
+        // Scroll-driven: barra de progresso com fallback para navegadores sem animation-timeline
+        const scrollProgress = document.getElementById('scroll-progress');
+        let scrollFramePending = false;
+
+        function updateScrollProgress() {
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+            scrollProgress.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
+
+            const hero = document.querySelector('section.relative.bg-ocean-900');
+            if (hero && window.innerWidth > 768) {
+                const shift = Math.min(window.scrollY * 0.12, 120);
+                hero.style.backgroundPosition = `center ${shift}px`;
+            }
+
+            scrollFramePending = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!scrollFramePending) {
+                window.requestAnimationFrame(updateScrollProgress);
+                scrollFramePending = true;
+            }
+        }, { passive: true });
+        updateScrollProgress();
 
         // 3. Scroll Animation (Fade In)
         const observerOptions = {
