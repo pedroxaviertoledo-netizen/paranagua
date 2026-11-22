@@ -72,6 +72,20 @@
         .wave-divider .shape-fill {
             fill: #f8fafc; /* bg-slate-50 */
         }
+        .event-row {
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .event-row:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+        .bar-tide, .bar-rain {
+            height: 10px;
+            border-radius: 999px;
+            transition: width 1s ease-out;
+        }
+        .bar-tide { background: linear-gradient(90deg, #38bdf8, #0284c7); }
+        .bar-rain { background: linear-gradient(90deg, #34d399, #047857); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden">
@@ -87,6 +101,7 @@
                 <div class="hidden md:flex space-x-8">
                     <a href="#sobre" class="hover:text-ocean-400 transition-colors">Sobre</a>
                     <a href="#metodologia" class="hover:text-ocean-400 transition-colors">Metodologia</a>
+                    <a href="#dados" class="hover:text-ocean-400 transition-colors">Dados Históricos</a>
                     <a href="#resultados" class="hover:text-ocean-400 transition-colors">Resultados</a>
                     <a href="#diario" class="hover:text-ocean-400 transition-colors">Diário de Bordo</a>
                 </div>
@@ -102,6 +117,7 @@
         <div id="mobile-menu" class="hidden md:hidden bg-ocean-800 pb-4 px-4">
             <a href="#sobre" class="block py-2 text-sm hover:text-ocean-400">Sobre</a>
             <a href="#metodologia" class="block py-2 text-sm hover:text-ocean-400">Metodologia</a>
+            <a href="#dados" class="block py-2 text-sm hover:text-ocean-400">Dados Históricos</a>
             <a href="#resultados" class="block py-2 text-sm hover:text-ocean-400">Resultados</a>
             <a href="#diario" class="block py-2 text-sm hover:text-ocean-400">Diário de Bordo</a>
         </div>
@@ -209,6 +225,120 @@
                     <p class="text-slate-600 text-sm">
                         Aplicação de questionários com 50 moradores locais (Centro Histórico, Rocio, Ilha dos Valadares, etc.) para avaliar os prejuízos e a percepção da comunidade sobre os alagamentos.
                     </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dados Históricos -->
+    <section id="dados" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 fade-in">
+                <span class="text-ocean-600 text-sm font-bold tracking-wider uppercase">Série 2014-2024</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-ocean-900 mt-2 mb-4">Eventos históricos de maré e chuva</h2>
+                <p class="text-slate-500 max-w-3xl mx-auto">Dados históricos cruzados por maré máxima, chuva acumulada em 24 horas e registros da Defesa Civil (COMPDEC).</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-100 text-center fade-in">
+                    <p class="text-sm text-slate-500 mb-2">Maior maré registrada</p>
+                    <p class="text-4xl font-extrabold text-ocean-600">2,5 m</p>
+                    <p class="text-sm text-slate-400 mt-1">28/01/2024</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-100 text-center fade-in">
+                    <p class="text-sm text-slate-500 mb-2">Maior chuva em 24 h</p>
+                    <p class="text-4xl font-extrabold text-mangrove-700">145 mm</p>
+                    <p class="text-sm text-slate-400 mt-1">28/01/2024</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-100 text-center fade-in">
+                    <p class="text-sm text-slate-500 mb-2">Eventos de alagamento severo</p>
+                    <p class="text-4xl font-extrabold text-orange-500">2</p>
+                    <p class="text-sm text-slate-400 mt-1">2022 e 2024</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-3 bg-white rounded-3xl shadow-lg border border-slate-100 p-6 md:p-8 fade-in">
+                    <h3 class="text-xl font-bold text-ocean-900 mb-6">Máximos por evento</h3>
+                    <div class="space-y-5" id="historical-bars">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">15/02/2014</span><span class="text-ocean-600">2,2 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:88%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">10/08/2015</span><span class="text-ocean-600">1,7 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:68%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">04/11/2016</span><span class="text-ocean-600">1,9 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:76%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">23/01/2021</span><span class="text-ocean-600">2,3 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:92%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">05/03/2022</span><span class="text-ocean-600">2,4 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:96%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">12/10/2023</span><span class="text-ocean-600">2,3 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:92%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">28/01/2024</span><span class="text-ocean-600">2,5 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:100%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">14/06/2024</span><span class="text-ocean-600">1,6 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:64%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="font-semibold text-slate-700">02/09/2024</span><span class="text-ocean-600">2,1 m</span></div>
+                            <div class="bg-slate-100 rounded-full"><div class="bar-tide" style="width:84%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-ocean-900 rounded-3xl p-6 md:p-8 text-white fade-in">
+                    <h3 class="text-xl font-bold mb-5">Leitura dos registros</h3>
+                    <ul class="space-y-5 text-sm text-slate-200">
+                        <li class="flex gap-3"><i class="fa-solid fa-circle-check text-mangrove-400 mt-1"></i><span><strong>Maior risco combinado:</strong> maré alta de 2,5 m com 145 mm de chuva em 28/01/2024.</span></li>
+                        <li class="flex gap-3"><i class="fa-solid fa-circle-check text-mangrove-400 mt-1"></i><span><strong>Quatro anos críticos:</strong> 2021, 2022, 2023 e 2024 registraram marés iguais ou superiores a 2,3 m.</span></li>
+                        <li class="flex gap-3"><i class="fa-solid fa-circle-check text-mangrove-400 mt-1"></i><span><strong>As sizígias concentram os casos:</strong> sete dos nove registros ocorreram em condição lunar de sizígia.</span></li>
+                        <li class="flex gap-3"><i class="fa-solid fa-circle-check text-mangrove-400 mt-1"></i><span><strong>Continuidade do problema:</strong> a Defesa Civil registrou alagamentos, transbordamentos e danos na maioria dos eventos críticos.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-10 bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden fade-in">
+                <div class="px-6 py-5 border-b border-slate-100">
+                    <h3 class="text-xl font-bold text-ocean-900">Registro completo dos eventos</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-ocean-900 text-white">
+                            <tr>
+                                <th class="px-5 py-4 whitespace-nowrap">Data</th>
+                                <th class="px-5 py-4 whitespace-nowrap">Maré máx.</th>
+                                <th class="px-5 py-4 whitespace-nowrap">Chuva 24 h</th>
+                                <th class="px-5 py-4 whitespace-nowrap">Condição</th>
+                                <th class="px-5 py-4 whitespace-nowrap">COMPDEC</th>
+                                <th class="px-5 py-4 min-w-64">Observações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">15/02/2014</td><td class="px-5 py-4">2,2 m</td><td class="px-5 py-4">85,4 mm</td><td class="px-5 py-4">Sizígia</td><td class="px-5 py-4">Alagamento Crônico</td><td class="px-5 py-4 text-slate-600">Transbordamento de canais de drenagem</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">10/08/2015</td><td class="px-5 py-4">1,7 m</td><td class="px-5 py-4">12,0 mm</td><td class="px-5 py-4">Quadratura</td><td class="px-5 py-4">Sem Ocorrência</td><td class="px-5 py-4 text-slate-600">-</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">04/11/2016</td><td class="px-5 py-4">1,9 m</td><td class="px-5 py-4">45,0 mm</td><td class="px-5 py-4">Sizígia</td><td class="px-5 py-4">Alagamento Leve</td><td class="px-5 py-4 text-slate-600">Lâmina d'água na Rua da Praia</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">23/01/2021</td><td class="px-5 py-4">2,3 m</td><td class="px-5 py-4">110,5 mm</td><td class="px-5 py-4">Sizígia</td><td class="px-5 py-4">Alagamento Crônico</td><td class="px-5 py-4 text-slate-600">Água invadiu comércios</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">05/03/2022</td><td class="px-5 py-4">2,4 m</td><td class="px-5 py-4">95,0 mm</td><td class="px-5 py-4">Sizígia</td><td class="px-5 py-4">Alagamento Severo</td><td class="px-5 py-4 text-slate-600">Danos materiais na Ilha dos Valadares</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">12/10/2023</td><td class="px-5 py-4">2,3 m</td><td class="px-5 py-4">130,2 mm</td><td class="px-5 py-4">Sizígia</td><td class="px-5 py-4">Transbordamento</td><td class="px-5 py-4 text-slate-600">Maré formou barreira impedindo escoamento</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">28/01/2024</td><td class="px-5 py-4">2,5 m</td><td class="px-5 py-4">145,0 mm</td><td class="px-5 py-4">Sizígia</td><td class="px-5 py-4">Alagamento Severo</td><td class="px-5 py-4 text-slate-600">Risco de retorno de esgoto no Rocio</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">14/06/2024</td><td class="px-5 py-4">1,6 m</td><td class="px-5 py-4">5,0 mm</td><td class="px-5 py-4">Normal</td><td class="px-5 py-4">Sem Ocorrência</td><td class="px-5 py-4 text-slate-600">Escoamento normal das águas</td></tr>
+                            <tr class="event-row"><td class="px-5 py-4 font-semibold">02/09/2024</td><td class="px-5 py-4">2,1 m</td><td class="px-5 py-4">70,0 mm</td><td class="px-5 py-4">Sizígia</td><td class="px-5 py-4">Alagamento Moderado</td><td class="px-5 py-4 text-slate-600">Alagamentos no Jardim Iguaçu</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
