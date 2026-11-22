@@ -140,6 +140,159 @@
                 display: none;
             }
         }
+        #linha-do-tempo {
+            height: 260vh;
+            background: #e2e8f0;
+        }
+        #linha-do-tempo .scrub-sticky {
+            position: sticky;
+            top: 64px;
+            height: calc(100vh - 64px);
+            min-height: 580px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, #0f172a 0%, #0369a1 58%, #075985 58%, #082f49 100%);
+        }
+        .scrub-sky {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 75% 18%, rgba(186, 230, 253, 0.45) 0 5%, transparent 6%),
+                linear-gradient(180deg, rgba(15, 23, 42, 0.15), transparent 70%);
+        }
+        .scrub-rain {
+            position: absolute;
+            inset: 0;
+            opacity: var(--rain-opacity, 0);
+            background-image: repeating-linear-gradient(105deg, transparent 0 18px, rgba(186, 230, 253, 0.75) 19px 20px);
+            background-size: 38px 38px;
+            transform: translateY(var(--rain-y, 0));
+        }
+        .scrub-city {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 19%;
+            height: 24%;
+            background:
+                linear-gradient(90deg,
+                    transparent 0 3%, #0f172a 3% 8%, transparent 8% 10%,
+                    #0f172a 10% 14%, transparent 14% 16%, #0f172a 16% 21%,
+                    transparent 21% 24%, #0f172a 24% 31%, transparent 31% 34%,
+                    #0f172a 34% 43%, transparent 43% 46%, #0f172a 46% 52%,
+                    transparent 52% 55%, #0f172a 55% 63%, transparent 63% 66%,
+                    #0f172a 66% 74%, transparent 74% 77%, #0f172a 77% 82%,
+                    transparent 82% 85%, #0f172a 85% 93%, transparent 93%);
+            clip-path: polygon(0 58%, 5% 58%, 5% 25%, 10% 25%, 10% 48%, 15% 48%, 15% 8%, 20% 8%, 20% 55%, 25% 55%, 25% 35%, 32% 35%, 32% 62%, 38% 62%, 38% 18%, 44% 18%, 44% 52%, 51% 52%, 51% 30%, 57% 30%, 57% 64%, 63% 64%, 63% 12%, 69% 12%, 69% 48%, 75% 48%, 75% 28%, 82% 28%, 82% 58%, 88% 58%, 88% 20%, 94% 20%, 94% 55%, 100% 55%, 100% 100%, 0 100%);
+        }
+        .scrub-water {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: var(--water-height, 24%);
+            background:
+                radial-gradient(ellipse at 20% 0, rgba(125, 211, 252, 0.7) 0 2%, transparent 3%),
+                linear-gradient(180deg, #38bdf8 0%, #0284c7 35%, #075985 100%);
+            transition: background-color 0.1s linear;
+            box-shadow: 0 -12px 30px rgba(186, 230, 253, 0.25);
+        }
+        .scrub-water::before {
+            content: "";
+            position: absolute;
+            left: -5%;
+            top: -18px;
+            width: 110%;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(224, 242, 254, 0.55);
+            filter: blur(2px);
+            transform: translateX(var(--wave-x, 0));
+        }
+        .scrub-metrics {
+            position: absolute;
+            z-index: 4;
+            top: 6%;
+            left: 5%;
+            right: 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .scrub-date,
+        .scrub-values {
+            color: white;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 18px;
+        }
+        .scrub-date {
+            padding: 14px 18px;
+        }
+        .scrub-values {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 12px;
+            padding: 12px 16px;
+        }
+        .scrub-caption {
+            position: absolute;
+            z-index: 5;
+            left: 5%;
+            bottom: 7%;
+            max-width: 520px;
+            color: white;
+        }
+        .scrub-caption h3 {
+            font-size: clamp(1.8rem, 4vw, 3.8rem);
+            line-height: 1;
+            font-weight: 800;
+            margin: 8px 0 12px;
+            text-shadow: 0 4px 24px rgba(15, 23, 42, 0.45);
+        }
+        .scrub-caption p {
+            max-width: 460px;
+            color: #e2e8f0;
+        }
+        .scrub-track {
+            position: absolute;
+            z-index: 6;
+            right: 3%;
+            top: 26%;
+            bottom: 24%;
+            width: 3px;
+            background: rgba(255, 255, 255, 0.24);
+        }
+        .scrub-track-fill {
+            width: 100%;
+            height: var(--track-progress, 0%);
+            background: #38bdf8;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+        }
+        @media (max-width: 640px) {
+            #linha-do-tempo {
+                height: 220vh;
+            }
+            #linha-do-tempo .scrub-sticky {
+                min-height: 500px;
+            }
+            .scrub-metrics {
+                top: 4%;
+            }
+            .scrub-values {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
+            .scrub-track {
+                display: none;
+            }
+            .scrub-caption {
+                bottom: 5%;
+                max-width: calc(100% - 10%);
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden">
@@ -157,6 +310,7 @@
                 <div class="hidden md:flex space-x-8">
                     <a href="#sobre" class="hover:text-ocean-400 transition-colors">Sobre</a>
                     <a href="#metodologia" class="hover:text-ocean-400 transition-colors">Metodologia</a>
+                    <a href="#linha-do-tempo" class="hover:text-ocean-400 transition-colors">Linha do Tempo</a>
                     <a href="#dados" class="hover:text-ocean-400 transition-colors">Dados Históricos</a>
                     <a href="#resultados" class="hover:text-ocean-400 transition-colors">Resultados</a>
                     <a href="#diario" class="hover:text-ocean-400 transition-colors">Diário de Bordo</a>
@@ -173,6 +327,7 @@
         <div id="mobile-menu" class="hidden md:hidden bg-ocean-800 pb-4 px-4">
             <a href="#sobre" class="block py-2 text-sm hover:text-ocean-400">Sobre</a>
             <a href="#metodologia" class="block py-2 text-sm hover:text-ocean-400">Metodologia</a>
+            <a href="#linha-do-tempo" class="block py-2 text-sm hover:text-ocean-400">Linha do Tempo</a>
             <a href="#dados" class="block py-2 text-sm hover:text-ocean-400">Dados Históricos</a>
             <a href="#resultados" class="block py-2 text-sm hover:text-ocean-400">Resultados</a>
             <a href="#diario" class="block py-2 text-sm hover:text-ocean-400">Diário de Bordo</a>
@@ -239,6 +394,43 @@
                     <img src="https://images.unsplash.com/photo-1464692823616-d36cfae2494f?q=80&w=1000&auto=format&fit=crop" alt="Manguezal e estuário" class="rounded-3xl shadow-2xl z-10 relative">
                     <div class="absolute -bottom-6 -right-6 w-full h-full border-4 border-mangrove-500 rounded-3xl z-0"></div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Linha do Tempo em Scroll -->
+    <section id="linha-do-tempo" aria-label="Linha do tempo de marés e chuvas">
+        <div class="scrub-sticky">
+            <div class="scrub-sky"></div>
+            <div class="scrub-rain"></div>
+            <div class="scrub-city"></div>
+            <div class="scrub-water"></div>
+
+            <div class="scrub-metrics">
+                <div class="scrub-date">
+                    <p class="text-xs uppercase tracking-widest text-sky-300 mb-1">Registro histórico</p>
+                    <strong id="scrub-date" class="text-xl md:text-2xl">15/02/2014</strong>
+                </div>
+                <div class="scrub-values">
+                    <div>
+                        <p class="text-xs text-slate-300">Maré máxima</p>
+                        <strong id="scrub-tide" class="text-xl text-sky-300">2,2 m</strong>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-300">Chuva / 24 h</p>
+                        <strong id="scrub-rain" class="text-xl text-emerald-300">85,4 mm</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scrub-caption">
+                <p id="scrub-condition" class="text-sm font-bold uppercase tracking-widest text-sky-300">Sizígia</p>
+                <h3 id="scrub-title">Alagamento crônico</h3>
+                <p id="scrub-description">Transbordamento de canais de drenagem</p>
+            </div>
+
+            <div class="scrub-track" aria-hidden="true">
+                <div class="scrub-track-fill"></div>
             </div>
         </div>
     </section>
@@ -605,7 +797,68 @@
         }, { passive: true });
         updateScrollProgress();
 
-        // 3. Scroll Animation (Fade In)
+        // 3. Linha do tempo controlada pela rolagem
+        const scrubSection = document.getElementById('linha-do-tempo');
+        const scrubEvents = [
+            { date: '15/02/2014', tide: 2.2, rain: 85.4, condition: 'Sizígia', title: 'Alagamento crônico', description: 'Transbordamento de canais de drenagem' },
+            { date: '10/08/2015', tide: 1.7, rain: 12.0, condition: 'Quadratura', title: 'Sem ocorrência', description: 'A combinação não provocou alagamento registrado' },
+            { date: '04/11/2016', tide: 1.9, rain: 45.0, condition: 'Sizígia', title: 'Alagamento leve', description: 'Lâmina d’água na Rua da Praia' },
+            { date: '23/01/2021', tide: 2.3, rain: 110.5, condition: 'Sizígia', title: 'Alagamento crônico', description: 'A água invadiu comércios' },
+            { date: '05/03/2022', tide: 2.4, rain: 95.0, condition: 'Sizígia', title: 'Alagamento severo', description: 'Danos materiais na Ilha dos Valadares' },
+            { date: '12/10/2023', tide: 2.3, rain: 130.2, condition: 'Sizígia', title: 'Transbordamento', description: 'A maré formou barreira e impediu o escoamento' },
+            { date: '28/01/2024', tide: 2.5, rain: 145.0, condition: 'Sizígia', title: 'Alagamento severo', description: 'Risco de retorno de esgoto no Rocio' },
+            { date: '14/06/2024', tide: 1.6, rain: 5.0, condition: 'Normal', title: 'Sem ocorrência', description: 'Escoamento normal das águas' },
+            { date: '02/09/2024', tide: 2.1, rain: 70.0, condition: 'Sizígia', title: 'Alagamento moderado', description: 'Alagamentos registrados no Jardim Iguaçu' }
+        ];
+        let scrubFramePending = false;
+
+        function updateScrubAnimation() {
+            if (!scrubSection) return;
+
+            const rect = scrubSection.getBoundingClientRect();
+            const scrollable = rect.height - window.innerHeight;
+            const progress = Math.min(1, Math.max(0, -rect.top / Math.max(scrollable, 1)));
+            const eventPosition = progress * (scrubEvents.length - 1);
+            const lowerIndex = Math.floor(eventPosition);
+            const upperIndex = Math.min(lowerIndex + 1, scrubEvents.length - 1);
+            const mix = eventPosition - lowerIndex;
+            const lower = scrubEvents[lowerIndex];
+            const upper = scrubEvents[upperIndex];
+
+            const tide = lower.tide + (upper.tide - lower.tide) * mix;
+            const rain = lower.rain + (upper.rain - lower.rain) * mix;
+            const tideHeight = 18 + ((tide - 1.6) / (2.5 - 1.6)) * 44;
+            const rainOpacity = rain / 145;
+            const activeIndex = mix > 0.58 ? upperIndex : lowerIndex;
+            const active = scrubEvents[activeIndex];
+
+            const sticky = scrubSection.querySelector('.scrub-sticky');
+            sticky.style.setProperty('--water-height', `${Math.max(18, Math.min(62, tideHeight))}%`);
+            sticky.style.setProperty('--rain-opacity', String(Math.max(0.08, rainOpacity)));
+            sticky.style.setProperty('--rain-y', `${-Math.round(progress * 90)}px`);
+            sticky.style.setProperty('--wave-x', `${Math.round(Math.sin(progress * Math.PI * 8) * 18)}px`);
+            sticky.style.setProperty('--track-progress', `${progress * 100}%`);
+
+            document.getElementById('scrub-date').textContent = active.date;
+            document.getElementById('scrub-tide').textContent = `${tide.toFixed(1).replace('.', ',')} m`;
+            document.getElementById('scrub-rain').textContent = `${rain.toFixed(1).replace('.', ',')} mm`;
+            document.getElementById('scrub-condition').textContent = active.condition;
+            document.getElementById('scrub-title').textContent = active.title;
+            document.getElementById('scrub-description').textContent = active.description;
+
+            scrubFramePending = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!scrubFramePending) {
+                window.requestAnimationFrame(updateScrubAnimation);
+                scrubFramePending = true;
+            }
+        }, { passive: true });
+        window.addEventListener('resize', updateScrubAnimation);
+        updateScrubAnimation();
+
+        // 4. Scroll Animation (Fade In)
         const observerOptions = {
             root: null,
             rootMargin: '0px',
